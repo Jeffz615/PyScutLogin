@@ -5,6 +5,7 @@ import re
 import execjs
 import os
 
+
 def PyScutLogin(username: str, password: str, service: str = '') -> requests.session:
     u = username
     p = password
@@ -15,7 +16,8 @@ def PyScutLogin(username: str, password: str, service: str = '') -> requests.ses
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.22 Safari/537.36 SE 2.X MetaSr 1.0'}
     session = requests.session()
-    r = session.get(url, headers=headers)
+    requests.adapters.DEFAULT_RETRIES = 5
+    r = session.get(url, headers=headers, timeout=(2, 5))
 
     # lt : r'value="(LT-\d+?-\w+?-cas)"'
     lt = re.findall(r'value="(LT-\d+?-\w+?-cas)"', r.text)[0]
@@ -41,7 +43,7 @@ def PyScutLogin(username: str, password: str, service: str = '') -> requests.ses
         'execution': execution,
         '_eventId': 'submit'
     }
-    print('LoginData :',data)
-    r = session.post(url, data=data, headers=headers)
-    print('Cookies :',session.cookies.items())
+    print('LoginData :', data)
+    r = session.post(url, data=data, headers=headers, timeout=(2, 5))
+    print('Cookies :', session.cookies.items())
     return session
